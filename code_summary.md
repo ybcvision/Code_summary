@@ -4,11 +4,11 @@
 ## 目录
 [TOC]
 
-## C++
+## 一、C++
 
-### 一、opencv
+### 1、opencv
 ____
-#### 1、一个透明度的PNGLogo加入到一张大图的指定位置
+#### 1.1、一个透明度的PNGLogo加入到一张大图的指定位置
 
 注意：类似于copyto的操作（to不能处理透明的图片）。
 
@@ -53,7 +53,7 @@ void Camera::InsertLogo(Mat image, Mat logoImage, int rowStart , int colStart)
 
 ```
 ____
-#### 2、putText加入中文内容
+#### 1.2、putText加入中文内容
 
 注：为了解决opencv中putText不能打中文
 
@@ -62,10 +62,10 @@ ____
 
 
 
-### 二、tensorflow
+### 2、tensorflow
 
 ____
-#### 1、Fast_Rcnn物体检测
+#### 2.1、Fast_Rcnn物体检测
 注：这是用C++ 使用经过python训练出的model进行物体检测，并且进行输出的代码
 
 1、头函数
@@ -101,12 +101,12 @@ namespace visionnav
 			~DeeplearningDetector();
 
 			void init();
-
+	
 			void close();
-
+	
 			vector<Saveditem> DL_Detector(cv::Mat &img);
 			vector<Saveditem> itemInfomation;
-
+	
 		};
 	}
 }
@@ -203,7 +203,7 @@ namespace visionnav
 	
 			// 设置输出;
 			vector<Saveditem> itemInfomation;
-
+	
 			string graphPath = tensorflow::io::JoinPath(ROOTDIR, GRAPH);
 			LOG(INFO) << "graphPath:" << graphPath;
 			Status loadGraphStatus = loadGraph(graphPath, &session);
@@ -222,14 +222,14 @@ namespace visionnav
 			else
 				LOG(INFO) << "readLabelsMapFile(): labels map loaded with " << labelsMap.size() << " label(s)" << endl;
 		}
-
+	
 		vector<Saveditem> DeeplearningDetector::DL_Detector(cv::Mat &img)
 		{
 			// Set input & output nodes names
 			string inputLayer = "image_tensor:0";
 			vector<string> outputLayer = { "detection_boxes:0", "detection_scores:0", "detection_classes:0", "num_detections:0" };
 			itemInfomation.clear();
-
+	
 			//输入图像;
 			Mat frame = img;
 			resize(frame, frame, Size(frame.cols/3, frame.rows/3));
@@ -248,23 +248,23 @@ namespace visionnav
 			{
 				LOG(ERROR) << "Mat->Tensor conversion failed: " << readTensorStatus;
 			}
-
+	
 			// Run the graph on tensor
 			outputs.clear();
-
+	
 			Status runStatus = session->Run({ { inputLayer, tensor } }, outputLayer, {}, &outputs);
 			if (!runStatus.ok()) {
 				LOG(ERROR) << "Running model failed: " << runStatus;
 			}
-
+	
 			// Extract results from the outputs vector
 			tensorflow::TTypes<float>::Flat scores = outputs[1].flat<float>();
 			tensorflow::TTypes<float>::Flat classes = outputs[2].flat<float>();
 			tensorflow::TTypes<float>::Flat numDetections = outputs[3].flat<float>();
 			tensorflow::TTypes<float, 3>::Tensor boxes = outputs[0].flat_outer_dims<float, 3>();
-
+	
 			vector<size_t> goodIdxs = filterBoxes(scores, boxes, thresholdIOU, thresholdScore);
-
+	
 			// Draw bboxes and captions
 			drawBoundingBoxesOnImage(img, scores, classes, boxes, labelsMap, goodIdxs);
 			for (size_t i = 0; i < goodIdxs.size(); i++)
@@ -282,7 +282,7 @@ namespace visionnav
 			}
 			return itemInfomation;
 		}
-
+	
 		void DeeplearningDetector::close()
 		{
 			itemInfomation.clear();
@@ -291,7 +291,7 @@ namespace visionnav
 			waitKey(50);
 			DeeplearningDetector::~DeeplearningDetector();
 		}
-
+	
 	}
 }
 
@@ -370,7 +370,7 @@ Status readLabelsMapFile(const string &fileName, map<int, string> &labelsMap) {
     stringstream buffer;
     buffer << t.rdbuf();
     string fileString = buffer.str();
-
+    
     // Search entry patterns of type 'item { ... }' and parse each of them
     smatch matcherEntry;
     smatch matcherId;
@@ -379,10 +379,10 @@ Status readLabelsMapFile(const string &fileName, map<int, string> &labelsMap) {
     const regex reId("[0-9]+");
     const regex reName("\'.+\'");
     string entry;
-
+    
     auto stringBegin = sregex_iterator(fileString.begin(), fileString.end(), reEntry);
     auto stringEnd = sregex_iterator();
-
+    
     int id;
     string name;
     for (sregex_iterator i = stringBegin; i != stringEnd; i++) {
@@ -409,26 +409,26 @@ Status readTensorFromMat(const Mat &mat, Tensor &outTensor) {
 
     auto root = tensorflow::Scope::NewRootScope();
     using namespace ::tensorflow::ops;
-
+    
     float *p = outTensor.flat<float>().data();
     Mat fakeMat(mat.rows, mat.cols, CV_32FC3, p);
     mat.convertTo(fakeMat, CV_32FC3);
-
+    
     auto input_tensor = Placeholder(root.WithOpName("input"), tensorflow::DT_FLOAT);
     vector<pair<string, tensorflow::Tensor>> inputs = {{"input", outTensor}};
     auto uint8Caster = Cast(root.WithOpName("uint8_Cast"), outTensor, tensorflow::DT_UINT8);
-
+    
     // This runs the GraphDef network definition that we've just constructed, and
     // returns the results in the output outTensor.
     tensorflow::GraphDef graph;
     TF_RETURN_IF_ERROR(root.ToGraphDef(&graph));
-
+    
     vector<Tensor> outTensors;
     unique_ptr<tensorflow::Session> session(tensorflow::NewSession(tensorflow::SessionOptions()));
-
+    
     TF_RETURN_IF_ERROR(session->Create(graph));
     TF_RETURN_IF_ERROR(session->Run({inputs}, {"uint8_Cast"}, {}, &outTensors));
-
+    
     outTensor = outTensors.at(0);
     return Status::OK();
 }
@@ -519,7 +519,7 @@ double IOU(Rect2f box1, Rect2f box2) {
     float yA = max(box1.tl().y, box2.tl().y);
     float xB = min(box1.br().x, box2.br().x);
     float yB = min(box1.br().y, box2.br().y);
-
+    
     float intersectArea = abs((xB - xA) * (yB - yA));
     float unionArea = abs(box1.area()) + abs(box2.area()) - intersectArea;
     return 1. * intersectArea / unionArea;
@@ -579,11 +579,11 @@ AI_result = deeplearning_detector_.DL_Detector(image_);
 
 
 ____
-## C#
+## 二、C#
 
-### 一、计算模块
+### 1、计算模块
 
-#### 1、用最小二乘法拟合二元多次曲线
+#### 1.1、用最小二乘法拟合二元多次曲线
 > 引用：http://blog.sina.com.cn/s/blog_6e51df7f0100thie.html
 
 ```
@@ -703,7 +703,7 @@ ____
         }//返回值是函数的系数
 
 
- 
+
 //主程序调用
 double[] arrX = new double[] { 21614, 17852, 14496, 10765, 7014, 3224 };
 double[] arrY = new double[] { 6.0715, 5.005, 4.0495, 2.9945, 1.93, 0.849 };
@@ -713,54 +713,134 @@ double[] result = MultiLine(arrY, arrX, 6, 1);
 ```
 
 
-##  Python
+##  三、Python
 
 ```
 
 ```
 
-## MarkDown
+## 四、MarkDown
+注意：此只支持Typora的markdown格式，对于cmd Markdown不能全部支持（会做说明）
+> 引用：https://www.zybuluo.com/mdeditor?url=https://www.zybuluo.com/static/editor/md-help.markdown#cmd-markdown
+> 引用：https://www.jianshu.com/p/191d1e21f7ed
+> 引用：https://blog.csdn.net/SIMBA1949/article/details/79001226
 
-### 一、标题
+***
+### 1、标题
 
-```gantt         
-       dateFormat  YYYY-MM-DD   
-       title 使用memaid语言定制甘特图
-       section 任务1
-       已完成的任务           :done,    des1, 2014-01-06,2014-01-08
-       正在进行的任务               :active,  des2, 2014-01-09, 3d
-       待完成任务1               :         des3, after des2, 5d
-       待完成任务2              :         des4, after des3, 5d
+在想要设置为标题的文字前面加#来表示
+ 一个#是一级标题，二个#是二级标题，以此类推。支持六级标题。
+
+***
+### 2、段落与字体
+
+#### 2.1 加粗
+要加粗的文字左右分别用两个*号包起来
+**这是加粗的文字**
+
+#### 2.2 斜体
+要倾斜的文字左右分别用一个* 号包起来
+*这是倾斜的文字*`
+
+#### 2.3 斜体加粗
+要倾斜和加粗的文字左右分别用三个 * 号包起来
+***这是斜体加粗的文字***
+
+注：同样可以用____来表示，*和_在Markdown中一致
+
+#### 2.4 删除线
+要加删除线的文字左右分别用两个~~号包起来
+
+~~这是加删除线的文字~~
+
+#### 2.5 下划线
+
+<u>下划线</u>
+
+#### 2.6 设置字体颜色，文字大小等
 ```
+<font color='color:文字颜色;font-size:文字大小</font>
+```
+<font color=red size=4 >我是red</font>
+
+#### 2.7 注脚
+
+使用 [^keyword] 表示注脚。
+
+这是一个注脚[^footnote]的样例。
+
+这是第二个注脚[^2]的样例。
+
+[^footnote]: 这是一个 *注脚* 的 **文本**。
+
+[^footnote]:这是另一个 *注脚* 的 **文本**
+
+
+#### 2.8 分割线
+
+******
+
+___________
+
+--------
+
+
+#### 2.9 引用
+
+引用的使用格式
+
+>+空格
+
+
+
+
+
+
+- [ ] **Markdown 开发**
+    - [ ] 改进 Cmd 渲染算法，使用局部渲染技术提高渲染效率
+    - [ ] 支持以 PDF 格式导出文稿
+    - [ ] 新增Todo列表功能 
+    - [ ] 改进 LaTex 功能
+        - [x] 修复 LaTex 公式渲染问题
+        - [ ] 新增 LaTex 公式编号功能 
+- [ ] **七月旅行准备**
+    - [ ] 准备邮轮上需要携带的物品
+    - [ ] 浏览日本免税店的物品
+    - [ ] 购买蓝宝石公主号七月一日的船票
+
+
+
+
+
 ```Mermaid
-gantt
-dateFormat  YYYY-MM-DD
-title Shop项目交付计划
-
-section 里程碑 0.1 
-数据库设计          :active,    p1, 2016-08-15, 3d
-详细设计            :           p2, after p1, 2d
-
-section 里程碑 0.2
-后端开发            :           p3, 2016-08-22, 20d
-前端开发            :           p4, 2016-08-22, 15d
-
-section 里程碑 0.3
-功能测试            :       p6, after p3, 5d
-上线               :       p7, after p6, 2d
-交付               :       p8, afterp7, 2d
+sequence
+    Alice->John: Hello John, how are you?
+    loop every minute
+        John-->Alice: Great!
+    end
 ```
 
+$$
+\sum_{i=1}^n a_i=0
+$$
+
+$$
+f(x_1,x_x,\ldots,x_n) = x_1^2 + x_2^2 + \cdots + x_n^2
+$$
+
+$$
+\sum^{j-1}_{k=0}{\widehat{\gamma}_{kj} z_k}
+$$
 
 
 
 
 
 
+```
 
+```
 
+```
 
-
-
-
-
+```
