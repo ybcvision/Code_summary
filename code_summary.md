@@ -12,7 +12,7 @@ ____
 
 注意：类似于copyto的操作（to不能处理透明的图片）。
 
-```
+```C++
 //定义和读取
         cv::Mat                     image_;                     /*! <相机图像 */
 		cv::Mat                     Title_image;                /*! <标题图片 */
@@ -586,7 +586,7 @@ ____
 #### 1.1、用最小二乘法拟合二元多次曲线
 > 引用：http://blog.sina.com.cn/s/blog_6e51df7f0100thie.html
 
-```
+```C#
 ///<summary>
         ///用最小二乘法拟合二元多次曲线
         ///例如y=ax+b
@@ -724,6 +724,7 @@ double[] result = MultiLine(arrY, arrX, 6, 1);
 > 引用：https://www.zybuluo.com/mdeditor?url=https://www.zybuluo.com/static/editor/md-help.markdown#cmd-markdown
 > 引用：https://www.jianshu.com/p/191d1e21f7ed
 > 引用：https://blog.csdn.net/SIMBA1949/article/details/79001226
+> 引用：https://jingyan.baidu.com/article/48b558e3035d9a7f38c09aeb.html
 
 ***
 ### 1、标题
@@ -791,34 +792,61 @@ ___________
 
 >+空格
 
+***
+### 3、代码
 
+支持四十一种编程语言的语法高亮的显示，行号显示。直接在`后加入语言即可
 
+非代码示例：
 
-
-
-- [ ] **Markdown 开发**
-    - [ ] 改进 Cmd 渲染算法，使用局部渲染技术提高渲染效率
-    - [ ] 支持以 PDF 格式导出文稿
-    - [ ] 新增Todo列表功能 
-    - [ ] 改进 LaTex 功能
-        - [x] 修复 LaTex 公式渲染问题
-        - [ ] 新增 LaTex 公式编号功能 
-- [ ] **七月旅行准备**
-    - [ ] 准备邮轮上需要携带的物品
-    - [ ] 浏览日本免税店的物品
-    - [ ] 购买蓝宝石公主号七月一日的船票
-
-
-
-
-
-```Mermaid
-sequence
-    Alice->John: Hello John, how are you?
-    loop every minute
-        John-->Alice: Great!
-    end
 ```
+$ sudo apt-get install vim-gnome
+```
+
+Python 示例：
+
+```python
+@requires_authorization
+def somefunc(param1='', param2=0):
+    '''A docstring'''
+    if param1 > param2: # interesting
+        print 'Greater'
+    return (param2 - param1 + 1) or None
+
+class SomeClass:
+    pass
+
+>>> message = '''interpreter
+... prompt'''
+```
+
+JavaScript 示例：
+
+``` javascript
+/**
+* nth element in the fibonacci series.
+* @param n >= 0
+* @return the nth element, >= 0.
+*/
+function fib(n) {
+  var a = 1, b = 1;
+  var tmp;
+  while (--n >= 0) {
+    tmp = a;
+    a += b;
+    b = tmp;
+  }
+  return a;
+}
+
+document.write(fib(10));
+```
+
+***
+### 4、数学公式
+
+
+$$ 表示整行公式：
 
 $$
 \sum_{i=1}^n a_i=0
@@ -832,15 +860,207 @@ $$
 \sum^{j-1}_{k=0}{\widehat{\gamma}_{kj} z_k}
 $$
 
+访问 [MathJax](http://meta.math.stackexchange.com/questions/5020/mathjax-basic-tutorial-and-quick-reference) 参考更多使用方法。
+
+***
+### 5、待办事宜 Todo 列表（任务列表）
+
+-空格 [x] 内容
+
+使用带有 [ ] 或 [x] （未完成或已完成）项的列表语法撰写一个待办事宜列表，并且支持子列表嵌套以及混用Markdown语法，例如：
+
+- [ ] **Markdown 开发**
+    - [ ] 改进 Cmd 渲染算法，使用局部渲染技术提高渲染效率
+    - [ ] 支持以 PDF 格式导出文稿
+    - [ ] 新增Todo列表功能 
+    - [ ] 改进 LaTex 功能
+        - [x] 修复 LaTex 公式渲染问题
+        - [ ] 新增 LaTex 公式编号功能 
+- [ ] **七月旅行准备**
+    - [ ] 准备邮轮上需要携带的物品
+    - [ ] 浏览日本免税店的物品
+    - [ ] 购买蓝宝石公主号七月一日的船票
+
+***
+### 6、表格
+
+| 项目        | 价格   |  数量  |
+| --------   | -----:  | :----:  |
+| 计算机     | \$1600 |   5     |
+| 手机        |   \$12   |   12   |
+| 管线        |    \$1    |  234  |
+
+***
+### 7、列表
 
 
 
 
+
+
+
+***
+### 8、mermaid图
+
+
+
+#### 8.1 流程图
+
+横向流程图
+
+```mermaid
+
+graph LR
+
+A[方形] -->B(圆角)
+
+    B --> C{条件a}
+
+    C -->|a=1| D[结果1]
+
+    C -->|a=2| E[结果2]
+
+    F[横向流程图]
 
 ```
 
-```
+纵向流程图
+
+```mermaid
+
+graph TD
+
+A[方形] -->B(圆角)
+
+    B --> C{条件a}
+
+    C -->|a=1| D[结果1]
+
+    C -->|a=2| E[结果2]
+
+    F[竖向流程图]
 
 ```
+
+标准流程图
+```flow
+
+st=>start: 开始框
+
+op=>operation: 处理框
+
+cond=>condition: 判断框(是或否?)
+
+sub1=>subroutine: 子流程
+
+io=>inputoutput: 输入输出框
+
+e=>end: 结束框
+
+st->op->cond
+
+cond(yes)->io->e
+
+cond(no)->sub1(right)->op
+
+```
+标准流程图源码格式（横向）：
+
+```flow
+
+st=>start: 开始框
+
+op=>operation: 处理框
+
+cond=>condition: 判断框(是或否?)
+
+sub1=>subroutine: 子流程
+
+io=>inputoutput: 输入输出框
+
+e=>end: 结束框
+
+st(right)->op(right)->cond
+
+cond(yes)->io(bottom)->e
+
+cond(no)->sub1(right)->op
+
+```
+
+#### 8.2 甘特图
+
+```mermaid
+gantt
+    title 项目开发流程
+    section 项目确定
+        需求分析       :a1, 2016-06-22, 3d
+        可行性报告     :after a1, 5d
+        概念验证       : 5d
+    section 项目实施
+        概要设计      :2016-07-05  , 5d
+        详细设计      :2016-07-08, 10d
+        编码          :2016-07-15, 10d
+        测试          :2016-07-22, 5d
+    section 发布验收
+        发布: 2d
+        验收: 3d
+```
+
+#### 8.3 时序图
+
+一、
+
+```mermaid
+
+%% 时序图例子,-> 直线，-->虚线，->>实线箭头
+
+  sequenceDiagram
+
+    participant 张三
+
+    participant 李四
+
+    张三->王五: 王五你好吗？
+
+    loop 健康检查
+
+        王五->王五: 与疾病战斗
+
+    end
+
+    Note right of 王五: 合理 食物 <br/>看医生...
+
+    李四-->>张三: 很好!
+
+    王五->李四: 你怎么样?
+
+    李四-->王五: 很好!
+
+```
+二、
+```sequence
+
+Title: 标题：复杂使用
+
+对象A->对象B: 对象B你好吗?（请求）
+
+Note right of 对象B: 对象B的描述
+
+Note left of 对象A: 对象A的描述(提示)
+
+对象B-->对象A: 我很好(响应)
+
+对象B->小三: 你好吗
+
+小三-->>对象A: 对象B找我了
+
+对象A->对象B: 你真的好吗？
+
+Note over 小三,对象B: 我们是朋友
+
+participant C
+
+Note right of C: 没人陪我玩
 
 ```
