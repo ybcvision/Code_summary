@@ -1,9 +1,12 @@
 # 代码模块总结
 ***
 
+## 目录
+[TOC]
+
 ## C++
 
-### opencv
+### 一、opencv
 ____
 #### 1、一个透明度的PNGLogo加入到一张大图的指定位置
 
@@ -59,7 +62,7 @@ ____
 
 
 
-### tensorflow
+### 二、tensorflow
 
 ____
 #### 1、Fast_Rcnn物体检测
@@ -578,7 +581,7 @@ AI_result = deeplearning_detector_.DL_Detector(image_);
 ____
 ## C#
 
-### 计算模块
+### 一、计算模块
 
 #### 1、用最小二乘法拟合二元多次曲线
 > 引用：http://blog.sina.com.cn/s/blog_6e51df7f0100thie.html
@@ -716,5 +719,49 @@ double[] result = MultiLine(arrY, arrX, 6, 1);
 
 ```
 
-
 ## MarkDown
+
+### 一、标题
+
+```Mermaid
+gantt         
+       dateFormat  YYYY-MM-DD   
+       title 使用memaid语言定制甘特图
+       section 任务1
+       已完成的任务           :done,    des1, 2014-01-06,2014-01-08
+       正在进行的任务               :active,  des2, 2014-01-09, 3d
+       待完成任务1               :         des3, after des2, 5d
+       待完成任务2              :         des4, after des3, 5d
+```
+```Mermaid
+gantt
+dateFormat  YYYY-MM-DD
+title Shop项目交付计划
+
+section 里程碑 0.1 
+数据库设计          :active,    p1, 2016-08-15, 3d
+详细设计            :           p2, after p1, 2d
+
+section 里程碑 0.2
+后端开发            :           p3, 2016-08-22, 20d
+前端开发            :           p4, 2016-08-22, 15d
+
+section 里程碑 0.3
+功能测试            :       p6, after p3, 5d
+上线               :       p7, after p6, 2d
+交付               :       p8, afterp7, 2d
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
