@@ -723,8 +723,7 @@ double[] result = MultiLine(arrY, arrX, 6, 1);
 
 ### 一、标题
 
-```Mermaid
-gantt         
+```gantt         
        dateFormat  YYYY-MM-DD   
        title 使用memaid语言定制甘特图
        section 任务1
