@@ -109,6 +109,28 @@ void main()
 	system("pause");
 }
 ```
+#### 1.4 对图片的每个像素每个通道赋值
+
+```C++
+
+Mat image_;
+		image_ = Mat(imgHeight, imgWidth, CV_32FC3);
+
+		vector<float> average_ampl;
+		average_ampl.resize(norm_ampl.size());
+		for (int i = 0; i < imgHeight; i++)
+			for (int j = 0; j < imgWidth; j++)
+			{
+				image_.at<Vec3f>(i, j)[0] = average_ampl[i*imgWidth + j];
+				image_.at<Vec3f>(i, j)[1] = average_ampl[i*imgWidth + j];
+				image_.at<Vec3f>(i, j)[2] = average_ampl[i*imgWidth + j];
+			}
+
+
+```
+
+
+
 
 
 
