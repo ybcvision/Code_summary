@@ -648,7 +648,79 @@ AI_result = deeplearning_detector_.DL_Detector(image_);
 ```
 所有结果都存在vector（AI_result）中
 
+### 3、 计算模块
 
+#### 3.1、3D空间计算
+
+```C++
+
+//三维double矢量;
+struct Vec3d_
+{
+	double x, y, z;
+
+	Vec3d_()
+	{
+		x = 0.0;
+		y = 0.0;
+		z = 0.0;
+	}
+	Vec3d_(double dx, double dy, double dz)
+	{
+		x = dx;
+		y = dy;
+		z = dz;
+	}
+	void Set(double dx, double dy, double dz)
+	{
+		x = dx;
+		y = dy;
+		z = dz;
+	}
+};
+
+//储存传感器数据的结构体;
+struct SensorData
+{
+	Point pixel_point;    // 在原图的像素点;
+	float distance;       // 点到相机的距离;
+	float amplitude;      // 点的振幅;
+	float x_value;        // x的值;
+	float y_value;        // y的值;
+	float z_value;        // z的值;
+	Vec3d_ pixel_norm;    // 该点的法向量;
+};
+
+//计算三点成面的法向量;
+void Cal_Normal_3D(const Vec3d_& v1, const Vec3d_& v2, const Vec3d_& v3, Vec3d_ &vn)
+{
+	//v1(n1,n2,n3);
+	//平面方程: na * (x – n1) + nb * (y – n2) + nc * (z – n3) = 0 ;
+	double na = (v2.y - v1.y)*(v3.z - v1.z) - (v2.z - v1.z)*(v3.y - v1.y);
+	double nb = (v2.z - v1.z)*(v3.x - v1.x) - (v2.x - v1.x)*(v3.z - v1.z);
+	double nc = (v2.x - v1.x)*(v3.y - v1.y) - (v2.y - v1.y)*(v3.x - v1.x);
+
+	//平面法向量
+	vn.Set(na, nb, nc);
+}
+
+// 计算三维空间两点之间的距离;
+void Cal_Distance_3D(const Vec3d_ &point1, const Vec3d_ &point2, double &distance_3D)
+{
+	double squre_x = (point2.x - point1.x)*(point2.x - point1.x);
+	double squre_y = (point2.y - point1.y)*(point2.y - point1.y);
+	double squre_z = (point2.z - point1.z)*(point2.x - point1.z);
+	distance_3D = sqrt(squre_x + squre_y + squre_z);
+}
+
+// 计算三维空间俩向量之间的夹角;
+void Cal_Norm_Angle(const Vec3d_ &norm1, const Vec3d_ &norm2, double &angle_norm_3D)
+{
+
+}
+
+
+```
 
 ____
 ## 二、C#
