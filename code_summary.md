@@ -720,9 +720,130 @@ void Cal_Norm_Angle(const Vec3d_ &norm1, const Vec3d_ &norm2, double &angle_norm
 }
 
 
+//点云计算平面方程
+#include <Eigen/SVD>
+// pts 中的点按照 xi yi zi的顺序存储，共n个点
+int plane_fitSVD(const double *pts, const int n, double *Para) {
+	using namespace Eigen;
+ 
+	// comfirm step for sampling according to n
+	int step = 1;
+	//step += 10 * n / 10000;
+ 
+	double ave_x, ave_y, ave_z;
+	ave_x = ave_y = ave_z = 0.0;
+	int realNo = 0;
+	for (int i = 0; i < n; i = i + step) {
+		double tem_x = pts[3 * i];
+		double tem_y = pts[3 * i + 1];
+		double tem_z = pts[3 * i + 2];
+		ave_x += tem_x;
+		ave_y += tem_y;
+		ave_z += tem_z;
+		realNo++;
+	}
+	ave_x /= realNo;
+	ave_y /= realNo;
+	ave_z /= realNo;
+ 
+	MatrixXd A(realNo, 3);
+	for (int i = 0, j = 0; i < n; i = i + step, j++) {
+		double tem_x = pts[3 * i];
+		double tem_y = pts[3 * i + 1];
+		double tem_z = pts[3 * i + 2];
+		A(j, 0) = tem_x - ave_x;
+		A(j, 1) = tem_y - ave_y;
+		A(j, 2) = tem_z - ave_z;
+	}
+	JacobiSVD<MatrixXd> svd(A, ComputeThinU | ComputeThinV);
+ 
+	Matrix3d V = svd.matrixV();
+ 
+	std::cout << "V :\n" << V << std::endl;
+ 
+	Para[0] = V(0,2);
+	Para[1] = V(1,2);
+	Para[2] = V(2,2);
+	Para[3] = -(Para[0] * ave_x + Para[1] * ave_y + Para[2] * ave_z);
+ 
+	std::cout << "Params are :\n" << Para[0] << "\t" << Para[1] << "\t" << Para[2] << "\t" << Para[3] << "\n";
+	return 0;
+}
+
+//这个是引用的代码：
+//原文链接：https://blog.csdn.net/zhangxz259/article/details/90174923
+
+
 ```
 
 ____
+###  4、 文件读写
+
+#### 4.1 fsteam用二进制读写vector
+```C++
+void main()
+{
+	//采用CPP模式写二进制文件
+	myTimer my;
+	std::vector<SensorData> sensordata;
+	sensordata.resize(25000);
+	for (int i = 0; i < sensordata.size(); i++)
+	{
+		sensordata[i].amplitude = i;
+		sensordata[i].distance = i;
+		sensordata[i].pixel_norm.x = i;
+		sensordata[i].pixel_norm.y = i;
+		sensordata[i].pixel_norm.z = i;
+		sensordata[i].x_value = i;
+		sensordata[i].y_value = i;
+		sensordata[i].z_value = i;
+	}
+	
+	
+	//写出数据
+	ofstream f("binary.dat", ios::binary);
+	if (!f)
+	{
+		cout << "创建文件失败" << endl;
+		return;
+	}
+	my.tic();
+	f.write(reinterpret_cast<char *>(sensordata.data()), sensordata.size() * sizeof(double));      //fwrite以char *的方式进行写出，做一个转化
+	f.close();
+	cout << my.toc() << endl;
+
+}
+
+void main()
+{
+	std::vector<SensorData> sensordata;
+	sensordata.resize(300000);
+	
+	
+	ifstream f("binary.dat", ios::binary);
+	if (!f)
+	{
+		cout << "读取文件失败" << endl;
+		return;
+	}
+	f.read(reinterpret_cast<char *>(sensordata.data()), sensordata.size() * sizeof(double));
+	for (int i = 0; i < 200; i++)
+		cout << sensordata[i].x_value << endl;
+	f.close();
+}
+
+
+
+```
+
+
+
+
+
+
+
+
+
 ## 二、C#
 
 ### 1、计算模块
