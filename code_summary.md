@@ -770,8 +770,12 @@ int plane_fitSVD(const double *pts, const int n, double *Para) {
 	return 0;
 }
 
+<<<<<<< HEAD
 //这个是引用的代码：
 //原文链接：https://blog.csdn.net/zhangxz259/article/details/90174923
+=======
+原文链接：https://blog.csdn.net/zhangxz259/article/details/90174923
+>>>>>>> master
 
 
 ```
